@@ -114,9 +114,10 @@ zmalloc.o: zmalloc.c config.h
 dependencies:
 	cd ../deps/hiredis && $(MAKE) static ARCH="$(ARCH)"
 	cd ../deps/linenoise && $(MAKE) ARCH="$(ARCH)"
+	cd ../deps/lua && $(MAKE) ARCH="$(ARCH)" ansi
 
 redis-server: $(OBJ)
-	$(CC) -o $(PRGNAME) $(CCOPT) $(DEBUG) $(OBJ)
+	$(CC) -o $(PRGNAME) $(CCOPT) $(DEBUG) $(OBJ) ../deps/lua/src/liblua.a
 
 redis-benchmark: dependencies $(BENCHOBJ)
 	cd ../deps/hiredis && $(MAKE) static
@@ -138,7 +139,7 @@ redis-check-aof: $(CHECKAOFOBJ)
 	$(CC) -o $(CHECKAOFPRGNAME) $(CCOPT) $(DEBUG) $(CHECKAOFOBJ)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(DEBUG) $(COMPILE_TIME) $<
+	$(CC) -c $(CFLAGS) $(DEBUG) $(COMPILE_TIME) -I../deps/lua/src $<
 
 clean:
 	rm -rf $(PRGNAME) $(BENCHPRGNAME) $(CLIPRGNAME) $(CHECKDUMPPRGNAME) $(CHECKAOFPRGNAME) *.o *.gcda *.gcno *.gcov
